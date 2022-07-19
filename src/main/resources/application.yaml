@@ -14,15 +14,15 @@ spring:
 
   servlet:
     multipart:
-      max-file-size: 10MB
-      max-request-size: 10MB
+      max-file-size: 50MB
+      max-request-size: 50MB
 
 
   datasource:
     driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
-    url: jdbc:sqlserver://103.94.159.179;database=remit_db
-    username: dev
-    password: sbdb@141
+    url: jdbc:sqlserver://localhost:1433;database=java
+    username: sa
+    password: root
 
 springdoc:
   api-docs:
