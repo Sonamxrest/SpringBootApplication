@@ -20,9 +20,12 @@ spring:
 
   datasource:
     driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
-    url: jdbc:sqlserver://localhost:1433;database=java
-    username: sa
-    password: root
+    url:  jdbc:sqlserver://103.94.159.179;database=java
+    username: dev
+    password: sbdb@141
+
+  liquibase:
+    enabled: false
 
 springdoc:
   api-docs:
