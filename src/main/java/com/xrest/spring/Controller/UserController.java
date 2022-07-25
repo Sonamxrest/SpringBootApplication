@@ -6,9 +6,10 @@ import com.xrest.spring.models.User;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-@Controller
-    @RequestMapping("/v1/user")
+@RestController
+@RequestMapping("/v1/user")
 public class UserController extends BaseController<User,Long> {
     private final UserService userService;
     public UserController(UserService userService) {

@@ -4,6 +4,10 @@ server:
 spring:
   application:
     name: app
+  security:
+    user:
+      name: sonam
+      password: sonam
 
 
   jpa:
