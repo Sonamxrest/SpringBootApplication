@@ -9,6 +9,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
+@CrossOrigin
 @RequestMapping("v1/user")
 public class UserController extends BaseController<User,Long> {
     private final UserService userService;
@@ -24,8 +25,8 @@ public class UserController extends BaseController<User,Long> {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         return  new ResponseEntity<User>(userService.save(user), HttpStatus.OK);
     }
-    @GetMapping("")
-    private String hello(){
-        return "index.html";
-    }
+//    @GetMapping("")
+//    private String hello(){
+//        return "index.html";
+//    }
 }

@@ -28,17 +28,17 @@ public class User extends BaseEntity<Long> implements UserDetails {
     private String password;
     private String profilePic;
     private Roles role;
-    private String permission;
+//    private String permission;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
 
-        return Arrays.asList(new SimpleGrantedAuthority(this.role.toString()));
+        return Arrays.asList(new SimpleGrantedAuthority("ROLE_"+this.role.toString()));
     }
 
     @Override
     public boolean isAccountNonExpired() {
-        return false;
+        return true;
     }
 
     @Override

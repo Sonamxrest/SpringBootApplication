@@ -1,6 +1,9 @@
 package com.xrest.spring.Configuration;
 
-import com.xrest.spring.ServiceImpl.UserServiceImpl;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.xrest.spring.Repository.UserRepo;
+import com.xrest.spring.Service.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -8,6 +11,7 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -15,10 +19,17 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @EnableWebSecurity
 public class SpringSecurity extends WebSecurityConfigurerAdapter {
 
-    private UserServiceImpl userService;
+    @Autowired
+    private UserService userService;
+    private final UserRepo userRepo;
 
-    public SpringSecurity(UserServiceImpl userService) {
+    private final ObjectMapper objectMapper;
+
+
+    public SpringSecurity(UserService userService, UserRepo userRepo, ObjectMapper objectMapper) {
         this.userService = userService;
+        this.userRepo = userRepo;
+        this.objectMapper = objectMapper;
     }
 
     @Override
@@ -33,7 +44,25 @@ public class SpringSecurity extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.
-                authorizeRequests().antMatchers("v1/user/**").permitAll().and().httpBasic();
+                csrf()
+                .disable()
+                .sessionManagement()
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS).
+                and().
+                addFilter(new JWTAuthenticationFilter(authenticationManager(), objectMapper))
+                .addFilter(new JWTAuthorizationFilter(authenticationManager(), userRepo)).
+                authorizeRequests()
+                .antMatchers("*").
+                permitAll();
+//                antMatchers("/v1/user/**").authenticated()
+//                .antMatchers("v1/user/save").permitAll();
+
+//                and()
+//                .httpBasic()
+//                .and().
+//                logout()
+//                .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
+//                .logoutSuccessUrl("/api/language");
 //                    antMatchers("/v1/user/save").hasAnyAuthority("AUTHORITY_TEST").
 //                antMatchers("v1/user/delete").hasRole("ADMIN")
 //                .and()
@@ -42,7 +71,7 @@ public class SpringSecurity extends WebSecurityConfigurerAdapter {
 
     @Bean
     PasswordEncoder passwordEncoder() {
-        return  new BCryptPasswordEncoder();
+        return new BCryptPasswordEncoder();
     }
 
     @Bean
