@@ -31,24 +31,27 @@ public class SpringSecurity extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http.
                 csrf().
-                disable()
-                .addFilter(new JWTAuthentication(objectMapper,authenticationManager()))
-                .addFilter(new JWTAuthorization(authenticationManager(),userRepo))
+                disable().sessionManagement()
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
+                .addFilter(new JWTAuthentication(objectMapper, authenticationManager()))
+                .addFilter(new JWTAuthorization(authenticationManager(), userRepo))
                 .authorizeRequests().
                 antMatchers("/login")
                 .permitAll().
+                antMatchers("/data/**").permitAll().
                 antMatchers("/v1/user/**").authenticated();
     }
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-       auth.authenticationProvider(authenticationProvider());
+        auth.authenticationProvider(authenticationProvider());
     }
 
     @Bean
     PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
+
     @Bean
     DaoAuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider();
